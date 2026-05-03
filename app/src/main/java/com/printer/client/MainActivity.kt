@@ -4,14 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import com.printer.client.ui.theme.AIDLClientTheme
+import com.printer.vendor.model.ReceiptRequest
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,32 +21,25 @@ class MainActivity : ComponentActivity() {
 
                 DisposableEffect(Unit) {
                     printerClient.bindService {
-                        printerClient.printReceipt()
+                        val request = ReceiptRequest(
+                            receiptNo = "12345",
+                            customerName = "Ahmed Ali",
+                            totalAmount = 250.0,
+                            lines = listOf(
+                                "SHIFT Booking Receipt",
+                                "Car: Toyota Camry",
+                                "Total: 250 SAR"
+                            )
+                        )
+                        printerClient.printReceipt(request)
                     }
 
                     onDispose {
                         printerClient.unbindPrinterService()
                     }
                 }
-
-                Greeting("Printer Client")
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AIDLClientTheme {
-        Greeting("Android")
-    }
-}
